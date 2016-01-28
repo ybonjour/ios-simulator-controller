@@ -18,6 +18,10 @@ describe IosSimulatorController::SimulatorSelector do
 		it 'returns a simulator' do
 			expect(subject.select('iOS 8.1', 'iPhone 5')).to_not be_nil
 		end
+
+		it 'creats correct simulator' do
+			expect(subject.select('iOS 8.1', 'iPhone 5').id).to be == 'E073E7C7-252C-4D0D-8644-D6A7350A0C14'
+		end
 	end
 
 	context 'when runtime does not exist' do
