@@ -29,7 +29,7 @@ module IosSimulatorController
 		private
 		attr_reader :xcrun
 
-				def phone?(phone, line)
+		def phone?(phone, line)
 			/#{phone}.*/ =~ line
 		end
 
