@@ -65,4 +65,12 @@ describe IosSimulatorController::Simulator do
 			subject.uninstall(application)
 		end
 	end
+
+	describe '#launch' do
+		let(:application) { double("application", :bundle_identifier => "com.myapplication.prod") }
+		it 'uses xcrun to launch the application on the simulator' do
+			expect(xcrun).to receive(:launch).with(simulator_id, application.bundle_identifier)
+			subject.launch(application)
+		end
+	end
 end

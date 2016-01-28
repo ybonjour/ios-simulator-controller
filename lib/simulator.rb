@@ -39,6 +39,10 @@ module IosSimulatorController
 			xcrun.uninstall(id, application.bundle_identifier)
 		end
 
+		def launch(application)
+			xcrun.launch(id, application.bundle_identifier)
+		end
+
 		private
 		attr_reader :simulator_string, :instruments, :xcodebuild, :process_handler, :xcrun
 	end
