@@ -8,6 +8,10 @@ module IosSimulatorController
 			def install(simulator_id, application_path)
 				`xcrun simctl install #{simulator_id} #{application_path}`
 			end
+
+			def uninstall(simulator_id, bundle_identifier)
+				`xcrun simctl uninstall #{simulator_id} #{bundle_identifier}`
+			end
 		end
 	end
 end

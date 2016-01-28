@@ -51,10 +51,18 @@ describe IosSimulatorController::Simulator do
 	end
 
 	describe '#install' do
-		let(:application) { IosSimulatorController::Application.new("/some/path/to/Application.app") }
-		it 'uses xcrun to install the application on the device' do
+		let(:application) { double("application", :path => "/some/path/to/Application.app") }
+		it 'uses xcrun to install the application on the simulator' do
 			expect(xcrun).to receive(:install).with(simulator_id, application.path)
 			subject.install(application)
+		end
+	end
+
+	describe '#uninstall' do
+		let(:application) { double("application", :bundle_identifier => "com.myapplication.prod") }
+		it 'uses xcrun to uninstall the application from the simulator' do
+			expect(xcrun).to receive(:uninstall).with(simulator_id, application.bundle_identifier)
+			subject.uninstall(application)
 		end
 	end
 end
