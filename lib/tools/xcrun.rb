@@ -13,8 +13,8 @@ module IosSimulatorController
 				`xcrun simctl uninstall #{simulator_id} #{bundle_identifier}`
 			end
 
-			def launch(simulator_id, bundle_identifier)
-				`xcrun simctl launch #{simulator_id} #{bundle_identifier}`
+			def launch(simulator_id, bundle_identifier, arguments)
+				`xcrun simctl launch #{simulator_id} #{bundle_identifier} #{arguments.join(", ")}`
 			end
 		end
 	end

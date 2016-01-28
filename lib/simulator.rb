@@ -39,8 +39,8 @@ module IosSimulatorController
 			xcrun.uninstall(id, application.bundle_identifier)
 		end
 
-		def launch(application)
-			xcrun.launch(id, application.bundle_identifier)
+		def launch(application, arguments=[])
+			xcrun.launch(id, application.bundle_identifier, arguments)
 		end
 
 		def close(application)
