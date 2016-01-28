@@ -14,6 +14,10 @@ module IosSimulatorController
 			data['CFBundleIdentifier']
 		end
 
+		def executable
+			data['CFBundleExecutable']
+		end
+
 		private
 		attr_reader :data
 	end

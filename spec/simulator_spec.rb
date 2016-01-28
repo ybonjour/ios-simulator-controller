@@ -73,4 +73,12 @@ describe IosSimulatorController::Simulator do
 			subject.launch(application)
 		end
 	end
+
+	describe '#close' do
+		let(:application) { double("application", :executable => "MyApp")}
+		it 'kills the process with the applications executable name' do
+			expect(process_handler).to receive(:killall).with(application.executable)
+			subject.close(application)
+		end
+	end
 end

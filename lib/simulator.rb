@@ -43,6 +43,10 @@ module IosSimulatorController
 			xcrun.launch(id, application.bundle_identifier)
 		end
 
+		def close(application)
+			process_handler.killall(application.executable)
+		end
+
 		private
 		attr_reader :simulator_string, :instruments, :xcodebuild, :process_handler, :xcrun
 	end
