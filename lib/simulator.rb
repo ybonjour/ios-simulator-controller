@@ -2,12 +2,13 @@ module IosSimulatorController
 	class Simulator
 		attr_reader :runtime
 
-		def initialize(runtime, simulator_string, instruments=Tools::Instruments.new, xcodebuild=Tools::Xcodebuild.new, process_handler=Tools::ProcessHandler.new)
+		def initialize(runtime, simulator_string, instruments=Tools::Instruments.new, xcodebuild=Tools::Xcodebuild.new, process_handler=Tools::ProcessHandler.new, xcrun=Tools::Xcrun.new)
 			@runtime = runtime
 			@simulator_string = simulator_string
 			@instruments = instruments
 			@xcodebuild = xcodebuild
 			@process_handler = process_handler
+			@xcrun = xcrun
 		end
 
 		def id
@@ -30,7 +31,11 @@ module IosSimulatorController
 			end
 		end
 
+		def install(application)
+			xcrun.install(id, application.path)
+		end
+
 		private
-		attr_reader :simulator_string, :instruments, :xcodebuild, :process_handler
+		attr_reader :simulator_string, :instruments, :xcodebuild, :process_handler, :xcrun
 	end
 end

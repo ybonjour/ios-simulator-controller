@@ -4,11 +4,12 @@ describe IosSimulatorController::Simulator do
 	let(:instruments) { double('instruments') }
 	let(:xcodebuild) { double('xcodebuild') }
 	let(:process_handler) { double('process_handler') }
+	let(:xcrun) { double('xcrun') }
 	let(:runtime) { 'iOS 8.4' }
 	let(:simulator_id) { 'E073E7C7-252C-4D0D-8644-D6A7350A0C14' }
 	let(:simulator_string) { "iPhone 5 (#{simulator_id}) (Shutdown)" }
 
-	subject { described_class.new(runtime, simulator_string, instruments, xcodebuild, process_handler) }
+	subject { described_class.new(runtime, simulator_string, instruments, xcodebuild, process_handler, xcrun) }
 
 	it 'has the corect runtime' do
 		expect(subject.runtime).to be ==  runtime
@@ -46,6 +47,14 @@ describe IosSimulatorController::Simulator do
 				expect(process_handler).to receive(:killall).with('Simulator')
 				subject.stop
 			end
+		end
+	end
+
+	describe '#install' do
+		let(:application) { IosSimulatorController::Application.new("/some/path/to/Application.app") }
+		it 'uses xcrun to install the application on the device' do
+			expect(xcrun).to receive(:install).with(simulator_id, application.path)
+			subject.install(application)
 		end
 	end
 end
