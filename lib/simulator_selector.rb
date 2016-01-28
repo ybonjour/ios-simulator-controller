@@ -4,7 +4,6 @@ module IosSimulatorController
 			@xcrun = xcrun
 		end
 
-
 		def select(runtime, phone)
 			lines = xcrun.list_simulators.split("\n")
 			idx = 0
