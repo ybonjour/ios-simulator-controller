@@ -16,6 +16,10 @@ module IosSimulatorController
 			def launch(simulator_id, bundle_identifier, arguments)
 				`xcrun simctl launch #{simulator_id} #{bundle_identifier} #{arguments.join(", ")}`
 			end
+
+			def erase(simulator_id)
+				`xcrun simctl erase #{simulator_id}`
+			end
 		end
 	end
 end

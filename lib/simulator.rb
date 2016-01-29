@@ -53,6 +53,10 @@ module IosSimulatorController
 			process_handler.killall(application.executable)
 		end
 
+		def erase_contents_and_settings
+			xcrun.erase(id)
+		end
+
 		def booted?
 			@state == STATE_BOOTED
 		end
