@@ -68,9 +68,10 @@ describe IosSimulatorController::Simulator do
 
 	describe '#launch' do
 		let(:application) { double("application", :bundle_identifier => "com.myapplication.prod") }
+		let(:arguments) { ['arg1', 'arg2'] }
 		it 'uses xcrun to launch the application on the simulator' do
-			expect(xcrun).to receive(:launch).with(simulator_id, application.bundle_identifier)
-			subject.launch(application)
+			expect(xcrun).to receive(:launch).with(simulator_id, application.bundle_identifier, arguments)
+			subject.launch(application, arguments)
 		end
 	end
 
