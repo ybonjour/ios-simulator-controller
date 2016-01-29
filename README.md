@@ -2,7 +2,7 @@
 A ruby gem to programatically control iOS Simulators.
 
 # How to use it
-```
+```ruby
 require 'ios-simulator-controller'
 
 simulator_selector = IosSimulatorController::SimulatorSelector.new
