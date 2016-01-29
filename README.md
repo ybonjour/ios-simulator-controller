@@ -17,6 +17,7 @@ simulator.launch(application)
 simulator.close(application)
 simulator.uninstall(application)
 simulator.stop
+simulator.erase_contents_and_settings
 ```
 
 # Authors
