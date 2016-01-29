@@ -7,9 +7,9 @@ require 'ios-simulator-controller'
 
 simulator_selector = IosSimulatorController::SimulatorSelector.new
 
-simulator = simulator_selector('iOS 8.1', 'iPhone 5')
+simulator = simulator_selector.select('iOS 8.1', 'iPhone 5')
 
-application = IosSimulatorController::Application.new('/path/to/YourApplication.app')
+application = IosSimulatorController::Application.new('/path/to/YourApplication.appgit')
 
 simulator.start
 simulator.install(application)
