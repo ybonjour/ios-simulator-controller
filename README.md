@@ -9,7 +9,7 @@ simulator_selector = IosSimulatorController::SimulatorSelector.new
 
 simulator = simulator_selector('iOS 8.1', 'iPhone 5')
 
-application = IosSimulatorController::Application.new
+application = IosSimulatorController::Application.new('/path/to/YourApplication.app')
 
 simulator.start
 simulator.install(application)
