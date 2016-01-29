@@ -7,9 +7,12 @@ describe IosSimulatorController::Simulator do
 	let(:xcrun) { double('xcrun') }
 	let(:runtime) { 'iOS 8.4' }
 	let(:simulator_id) { 'E073E7C7-252C-4D0D-8644-D6A7350A0C14' }
-	let(:simulator_string) { "iPhone 5 (#{simulator_id}) (Shutdown)" }
+	let(:booted_simulator_string) { "iPhone 5 (#{simulator_id}) (Booted)" }
+	let(:shutdown_simulator_string) { "iPhone 5 (#{simulator_id}) (Shutdown)" }
+	let(:booted_simulator) { described_class.new(runtime, booted_simulator_string, instruments, xcodebuild, process_handler, xcrun) }
+	let(:shutdown_simulator) { described_class.new(runtime, shutdown_simulator_string, instruments, xcodebuild, process_handler, xcrun) }
 
-	subject { described_class.new(runtime, simulator_string, instruments, xcodebuild, process_handler, xcrun) }
+	subject { booted_simulator }
 
 	describe '#initialize' do
 		it 'has the corect runtime' do
@@ -20,15 +23,14 @@ describe IosSimulatorController::Simulator do
 			expect(subject.id).to be == simulator_id
 		end
 
-		context 'when simulator is initially booted' do
-			let(:booted_simulator_string) { "iPhone 5 (#{simulator_id}) (Booted)" }
-			subject { described_class.new(runtime, booted_simulator_string, instruments, xcodebuild, process_handler, xcrun) }
+		context 'when simulator is initially booted' do		
 			it 'creates a booted simulator' do
 				expect(subject.booted?).to be_truthy
 			end
 		end
 
 		context 'when the simulator is initially shutdown' do
+			subject { shutdown_simulator }
 			it 'creates a non-booted simulator' do
 				expect(subject.booted?).to be_falsey
 			end
@@ -90,6 +92,13 @@ describe IosSimulatorController::Simulator do
 			expect(xcrun).to receive(:install).with(simulator_id, application.path)
 			subject.install(application)
 		end
+
+		context 'when simulator has not been started' do
+			subject { shutdown_simulator }
+			it 'raises an error' do
+				expect { subject.install(application) }.to raise_error("simulator hasn't been started")
+			end
+		end
 	end
 
 	describe '#uninstall' do
@@ -97,6 +106,13 @@ describe IosSimulatorController::Simulator do
 		it 'uses xcrun to uninstall the application from the simulator' do
 			expect(xcrun).to receive(:uninstall).with(simulator_id, application.bundle_identifier)
 			subject.uninstall(application)
+		end
+
+		context 'when simulator has not been started' do
+			subject { shutdown_simulator }
+			it 'raises an error' do
+				expect { subject.uninstall(application) }.to raise_error("simulator hasn't been started")
+			end
 		end
 	end
 
@@ -107,6 +123,13 @@ describe IosSimulatorController::Simulator do
 			expect(xcrun).to receive(:launch).with(simulator_id, application.bundle_identifier, arguments)
 			subject.launch(application, arguments)
 		end
+
+		context 'when simulator has not been started' do
+			subject { shutdown_simulator }
+			it 'raises an error' do
+				expect { subject.launch(application) }.to raise_error("simulator hasn't been started")
+			end
+		end
 	end
 
 	describe '#close' do
@@ -115,13 +138,28 @@ describe IosSimulatorController::Simulator do
 			expect(process_handler).to receive(:killall).with(application.executable)
 			subject.close(application)
 		end
+
+		context 'when simulator has not been started' do
+			subject { shutdown_simulator }
+			it 'raises an error' do
+				expect { subject.close(application) }.to raise_error("simulator hasn't been started")
+			end
+		end
 	end
 
 
 	describe '#erase_contents_and_settings' do
+		subject { shutdown_simulator }
 		it 'uses xcrun to erase contents and settings of simulator' do
 			expect(xcrun).to receive(:erase).with(simulator_id)
 			subject.erase_contents_and_settings
+		end
+
+		context 'when simulator is still running' do
+			subject { booted_simulator }
+			it 'raises an error' do
+				expect { subject.erase_contents_and_settings }.to raise_error("simulator needs to be stopped to erase data")
+			end
 		end
 	end
 end

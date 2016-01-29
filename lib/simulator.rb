@@ -38,22 +38,27 @@ module IosSimulatorController
 		end
 
 		def install(application)
+			raise "simulator hasn't been started" unless booted?
 			xcrun.install(id, application.path)
 		end
 
 		def uninstall(application)
+			raise "simulator hasn't been started" unless booted?
 			xcrun.uninstall(id, application.bundle_identifier)
 		end
 
 		def launch(application, arguments=[])
+			raise "simulator hasn't been started" unless booted?
 			xcrun.launch(id, application.bundle_identifier, arguments)
 		end
 
 		def close(application)
+			raise "simulator hasn't been started" unless booted?
 			process_handler.killall(application.executable)
 		end
 
 		def erase_contents_and_settings
+			raise "simulator needs to be stopped to erase data" if booted?
 			xcrun.erase(id)
 		end
 
