@@ -2,9 +2,13 @@ module IosSimulatorController
 	class Simulator
 		attr_reader :runtime
 
+		STATE_SHUTDOWN = :shutdown
+		STATE_BOOTED = :booted
+
 		def initialize(runtime, simulator_string, instruments=Tools::Instruments.new, xcodebuild=Tools::Xcodebuild.new, process_handler=Tools::ProcessHandler.new, xcrun=Tools::Xcrun.new)
 			@runtime = runtime
 			@simulator_string = simulator_string
+			@state = extract_state(simulator_string)
 			@instruments = instruments
 			@xcodebuild = xcodebuild
 			@process_handler = process_handler
@@ -17,6 +21,7 @@ module IosSimulatorController
 
 		def start
 			instruments.launch_simulator(id)
+			@state = STATE_BOOTED
 		end
 
 		def stop
@@ -29,6 +34,7 @@ module IosSimulatorController
 			else
 				process_handler.killall("Simulator")
 			end
+			@state = STATE_SHUTDOWN
 		end
 
 		def install(application)
@@ -47,7 +53,15 @@ module IosSimulatorController
 			process_handler.killall(application.executable)
 		end
 
+		def booted?
+			@state == STATE_BOOTED
+		end
+
 		private
 		attr_reader :simulator_string, :instruments, :xcodebuild, :process_handler, :xcrun
+
+		def extract_state(simulator_string)
+			/.*\(.*\) \((Booted)\)/ =~ simulator_string ? STATE_BOOTED : STATE_SHUTDOWN
+		end
 	end
 end

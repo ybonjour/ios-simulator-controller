@@ -11,18 +11,40 @@ describe IosSimulatorController::Simulator do
 
 	subject { described_class.new(runtime, simulator_string, instruments, xcodebuild, process_handler, xcrun) }
 
-	it 'has the corect runtime' do
-		expect(subject.runtime).to be ==  runtime
-	end
+	describe '#initialize' do
+		it 'has the corect runtime' do
+			expect(subject.runtime).to be ==  runtime
+		end
 
-	it 'has the correct id' do
-		expect(subject.id).to be == simulator_id
+		it 'has the correct id' do
+			expect(subject.id).to be == simulator_id
+		end
+
+		context 'when simulator is initially booted' do
+			let(:booted_simulator_string) { "iPhone 5 (#{simulator_id}) (Booted)" }
+			subject { described_class.new(runtime, booted_simulator_string, instruments, xcodebuild, process_handler, xcrun) }
+			it 'creates a booted simulator' do
+				expect(subject.booted?).to be_truthy
+			end
+		end
+
+		context 'when the simulator is initially shutdown' do
+			it 'creates a non-booted simulator' do
+				expect(subject.booted?).to be_falsey
+			end
+		end
 	end
 
 	describe '#start' do
 		it 'uses instruments to start the simulator' do
 			expect(instruments).to receive(:launch_simulator).with(simulator_id)
 			subject.start
+		end
+
+		it 'sets simulator state to booted' do
+			allow(instruments).to receive(:launch_simulator)
+			subject.start
+			expect(subject.booted?).to be_truthy
 		end
 	end
 
@@ -36,6 +58,12 @@ describe IosSimulatorController::Simulator do
 				expect(process_handler).to receive(:killall).with('iOS Simulator')
 				subject.stop
 			end
+
+			it 'sets simulator state to shutdown' do
+				allow(process_handler).to receive(:killall)
+				subject.stop
+				expect(subject.booted?).to be_falsey
+			end
 		end
 
 		context 'when xocde version is bigger or equal to 7' do
@@ -46,6 +74,12 @@ describe IosSimulatorController::Simulator do
 			it 'uses process handler to kill all process with Simulator' do
 				expect(process_handler).to receive(:killall).with('Simulator')
 				subject.stop
+			end
+
+			it 'sets simulator state to shutdown' do
+				allow(process_handler).to receive(:killall)
+				subject.stop
+				expect(subject.booted?).to be_falsey
 			end
 		end
 	end
@@ -80,6 +114,14 @@ describe IosSimulatorController::Simulator do
 		it 'kills the process with the applications executable name' do
 			expect(process_handler).to receive(:killall).with(application.executable)
 			subject.close(application)
+		end
+	end
+
+
+	describe '#erase_contents_and_settings' do
+		it 'uses xcrun to erase contents and settings of simulator' do
+			expect(xcrun).to receive(:erase).with(simulator_id)
+			subject.erase_contents_and_settings
 		end
 	end
 end
